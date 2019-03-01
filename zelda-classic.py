@@ -1,3 +1,5 @@
+import pixel
+
 music.play("overworld.ogg")
 
 WIDTH = 800
@@ -9,9 +11,14 @@ duration = 0.05
 portal_x = range(0,1)
 portal_y = range(0,1)
 
+color = 'black'
+
+
+
 link = Actor('link_down1')
 link.pos = WIDTH/2, HEIGHT/2
 link.orientation = 'down'
+
 
 def set_link_normal():
 	link.image = 'link_down1'
@@ -44,9 +51,9 @@ def evaluateKeyboard():
 		attack()
 		clock.schedule(set_link_image, 0.2)	
 
-def evaluatePosition():
-	if link.x in portal_x and link.y in portal_y:
-		pass
+def evaluatePosition( pos ):
+	color = pixel.evaluateColor( pos )
+	#print(pixel.get_color_name(color))
 
 def draw():
     screen.clear()
@@ -56,6 +63,6 @@ def draw():
 def update():
 
 	evaluateKeyboard()
-	evaluatePosition()
+	evaluatePosition(link.pos)
 
 		
