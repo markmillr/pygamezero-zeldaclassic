@@ -1,4 +1,4 @@
-import pixel
+#import pixel
 
 music.play("overworld.ogg")
 
@@ -8,7 +8,6 @@ HEIGHT = 500
 distance = 5
 duration = 0.03
 
-scene = 'overworld'
 link = Actor('link_down1')
 meanie = Actor('meanie2')
 portal = Actor('portal', pos=(225,75))
@@ -18,17 +17,17 @@ link.orientation = 'down'
 
 class GameState():
 	def __init__(self):
-		self.current_room = 'overworld'
+		self.rooms = ['overworld', 'cave']
+		self.current_room = self.rooms[0]
 		self.portal_positions = [portal.pos]
 
-gameState = GameState()
-print(gameState.current_room)
+class Overworld():
+	def __init__(self):
+		self.portal_positions = [(225,75)]
 
 class Cave():
 	def __init__(self):
-		self.portal_positions = [(WIDTH/2, HEIGHT)]
-
-cave = Cave()
+		self.portal_positions = [(WIDTH/2, HEIGHT-20)]
 
 def set_link_image():
 	link.image = 'link_' + link.orientation + '1'
@@ -58,34 +57,42 @@ def evaluateKeyboard():
 		attack()
 		clock.schedule(set_link_image, 0.2)	
 
-def evaluatePosition( pos , scene):
-	if portal.collidepoint(link.pos):
+def evaluatePosition(pos):
+	if portal.collidepoint(link.pos) and gameState.current_room == 'overworld':
 		gameState.current_room = 'cave'
 		print(gameState.current_room)
 		gameState.portal_position = cave.portal_positions[0]
 		portal.pos = gameState.portal_position
+		link.pos = cave.portal_positions[0]
 		#print('entered portal... scene:', scene)
+	elif portal.collidepoint(link.pos) and gameState.current_room == 'cave':
+		gameState.current_room = 'overworld'
+		print(gameState.current_room)
+		gameState.portal_position = overworld.portal_positions[0]
+		portal.pos = gameState.portal_position
 	elif meanie.collidepoint(link.pos):
 		#print('ouch')
 		#print('not in portal.... scene:', scene)
 		pass
-	return scene
+
+gameState = GameState()
+print(gameState.current_room)
+overworld = Overworld()
+cave = Cave()
 	
 
 def draw():
     screen.clear()
     
     screen.blit(gameState.current_room, (0, 0))
-    
-   
+      
     portal.draw()
     link.draw()
     meanie.draw()
     
-
 def update():
 
 	evaluateKeyboard()
-	evaluatePosition(link.pos, scene)
+	evaluatePosition(link.pos)
 
 		
