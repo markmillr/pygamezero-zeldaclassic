@@ -6,22 +6,29 @@ WIDTH = 800
 HEIGHT = 500
 
 distance = 5
-duration = 0.05
+duration = 0.03
 
-portal_x = range(0,1)
-portal_y = range(0,1)
-
-color = 'black'
-
-
-
+scene = 'overworld'
 link = Actor('link_down1')
+meanie = Actor('meanie2')
+portal = Actor('portal', pos=(225,75))
 link.pos = WIDTH/2, HEIGHT/2
+meanie.pos = WIDTH/2 + 100, HEIGHT/2 + 100
 link.orientation = 'down'
 
+class GameState():
+	def __init__(self):
+		self.current_room = 'overworld'
+		self.portal_positions = [portal.pos]
 
-def set_link_normal():
-	link.image = 'link_down1'
+gameState = GameState()
+print(gameState.current_room)
+
+class Cave():
+	def __init__(self):
+		self.portal_positions = [(WIDTH/2, HEIGHT)]
+
+cave = Cave()
 
 def set_link_image():
 	link.image = 'link_' + link.orientation + '1'
@@ -51,18 +58,34 @@ def evaluateKeyboard():
 		attack()
 		clock.schedule(set_link_image, 0.2)	
 
-def evaluatePosition( pos ):
-	color = pixel.evaluateColor( pos )
-	#print(pixel.get_color_name(color))
+def evaluatePosition( pos , scene):
+	if portal.collidepoint(link.pos):
+		gameState.current_room = 'cave'
+		print(gameState.current_room)
+		gameState.portal_position = cave.portal_positions[0]
+		portal.pos = gameState.portal_position
+		#print('entered portal... scene:', scene)
+	elif meanie.collidepoint(link.pos):
+		#print('ouch')
+		#print('not in portal.... scene:', scene)
+		pass
+	return scene
+	
 
 def draw():
     screen.clear()
-    screen.blit('overworld', (0, 0))
+    
+    screen.blit(gameState.current_room, (0, 0))
+    
+   
+    portal.draw()
     link.draw()
+    meanie.draw()
+    
 
 def update():
 
 	evaluateKeyboard()
-	evaluatePosition(link.pos)
+	evaluatePosition(link.pos, scene)
 
 		
