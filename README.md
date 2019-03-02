@@ -9,7 +9,7 @@ Requires Pygame Zero
 pip install pgzero
 ```
 
-Run using the Pygame Zero CLI:
+Run using the Pygame Zero runner:
 ```
 pgzrun zelda-classic.py
 ```
